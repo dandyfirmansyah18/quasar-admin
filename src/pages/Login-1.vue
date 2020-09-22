@@ -17,12 +17,12 @@
           </q-card-section>
           <q-card-section>
             <q-form
-              class="q-gutter-md"
+              class="q-gutter-md" @submit.prevent="login" method="POST"
             >
               <q-input
                 filled
-                v-model="username"
-                label="Username"
+                v-model="email"
+                label="Email"
                 lazy-rules
               />
 
@@ -36,7 +36,7 @@
               />
 
               <div>
-                <q-btn label="Login" to="/" type="button" color="primary"/>
+                <q-btn label="Login" type="submit" color="primary"/>
               </div>
             </q-form>
           </q-card-section>
@@ -47,13 +47,35 @@
 </template>
 
 <script>
+import axios from "axios";
+
     export default {
         data() {
             return {
-                username: 'Pratik',
-                password: '12345'
+                email: '',
+                password: ''
             }
         },
+        methods: {
+          login() {
+            let self = this;
+            axios.post(  this.$apiAdress + '/authentication', {
+              strategy: "local",
+              email: self.email,
+              password: self.password,
+            }).then(function (response) {
+              self.email = '';
+              self.password = '';
+              localStorage.setItem("apiToken", response.data.accessToken);
+              self.$router.push({ path: '/' });
+            })
+            .catch(function (error) {
+              self.message = 'Incorrect E-mail or password';
+              console.log(message);
+            });
+    
+          }
+        }
     }
 </script>
 
